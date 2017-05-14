@@ -10,4 +10,10 @@ def pytest_configure():
             'django.contrib.auth',
             'django.contrib.contenttypes',
             'create_admin',
-        ])
+        ],
+        DATABASES={
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': ':memory:',
+            }
+        })
