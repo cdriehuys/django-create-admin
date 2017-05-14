@@ -40,11 +40,10 @@ class Command(BaseCommand):
             raise CommandError('--password is required when a username is '
                                'given.')
 
-        user = get_user_model().objects.create_user(
-            username=username,
-            password=password)
+        user, _ = get_user_model().objects.get_or_create(username=username)
 
-        # Set additional admin flags
+        # Set user info
+        user.set_password(password)
         user.is_staff = True
         user.is_superuser = True
 

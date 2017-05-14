@@ -32,6 +32,22 @@ def test_no_args():
     assert '--username and --password are required' in str(excinfo.value)
 
 
+def test_update_password(django_user_model):
+    """
+    If a user with the given username already exists, their password
+    should be updated to the one given.
+    """
+    user = django_user_model.objects.create_user(
+        username='foo',
+        password='bar')
+
+    out = StringIO()
+    call_command('create-admin', username='foo', password='baz', out=out)
+
+    user.refresh_from_db()
+    assert user.check_password('baz')
+
+
 def test_username_no_password():
     """
     If a username is provided but a password isn't, an error should be
