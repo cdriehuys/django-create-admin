@@ -1,5 +1,12 @@
+import os
+
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
+
+
+# Environment variable names
+ENV_PASSWORD = 'DJANGO_ADMIN_PASSWORD'
+ENV_USERNAME = 'DJANGO_ADMIN_USERNAME'
 
 
 class Command(BaseCommand):
@@ -7,6 +14,25 @@ class Command(BaseCommand):
     Command to create/manage admin users.
     """
     help = 'Create an admin user'
+
+    @staticmethod
+    def get_username(**options):
+        """
+        Get the admin's username.
+
+        We first check the provided options to see if a username was
+        given. If that's not present we fall back to the
+        ``DJANGO_ADMIN_USERNAME`` environment variable.
+
+        Args:
+            options:
+                The options produced from the command's argument parser.
+
+        Returns:
+            The admin's username, if it was specifed, and ``None``
+            otherwise.
+        """
+        return options.get('username') or os.environ.get(ENV_USERNAME)
 
     def add_arguments(self, parser):
         """
@@ -30,7 +56,7 @@ class Command(BaseCommand):
         """
         Create an admin user based on the given options.
         """
-        username = options.get('username')
+        username = Command.get_username(**options)
         password = options.get('password')
 
         if not username:
