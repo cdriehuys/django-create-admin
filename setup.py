@@ -13,7 +13,7 @@ def get_description():
 setup(
     # Package meta-data
     name='django-create-admin',
-    version='0.0.0',
+    version='0.1.0',
     description='Django management commands to create admin users.',
     long_description=get_description(),
     author='Chathan Driehuys',
