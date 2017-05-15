@@ -19,4 +19,6 @@ install:
   - pip install "django $DJANGO"
   - pip install -r requirements-test.txt
 
+before_script: flake8 .
+
 script: pytest create_admin
