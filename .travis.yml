@@ -23,6 +23,7 @@ before_script: flake8 .
 
 script: pytest create_admin
 
+# Add job to deploy to PyPI after tests complete
 jobs:
   include:
   - stage: PyPI release
@@ -33,3 +34,6 @@ jobs:
       user: cdriehuys
       password:
         secure: ROBzrw/kMRoRQuK/fgTMELohE7Gz9Tb1V0mq98Rii2W680RwbM7Mo2eg70LkSxHjeMKrA6ysbLSbNBIplvpBo4z+iMYTe4UsxU3L+vEeS9TPkcegohQjQpqxss5q8XKeJ4fDSxz/b1BHT0S/q9gTkYJC4JUY7DGX3FVsGZnoruLLdd/pgvMi/VTDUn1KQOObNgzeDgtUIkXHB0ey/4O9LThTgOmkC3rW9Tht5279NC+yQwxRIjrZnY7REiyqaTHB4PrfPsaRsWAg+vd1RqyPA0cw1NoCWmPlOS7YtFv7QU8bJkatkio2SwFkVb8sy5/li53FTv4CtpHn7zEdFwf/yw1ngUOw2qvHKHj/uBIGk3wOmAElfe8EMDdysUl4H+JzYcTwhUO19UVo4deaBu0XXTckvRqu7gVbs0j1VpCwa9STaD5sVLg0O4NTk3OG7bST4YPsBSzgn9gk5h1CMhmA7l48t2tO6Ua5y6bmhFc0mMifGregrwJbP7j2p3A1aV58hF/U9RS/y8aDtO+HHBee/qWBGiP7zB3dMQx5eTH6aG28QTif2oELDex7OYZUy2RpC5X4H1OoDIMN9Tzx9BO9bGl5KkdhMdtt1sWLFYm0CUVIyAWxEWbOp5fIO92ztz/RwCW6GkoSyeZP2pSxUUllF1jwXIs7JobIEYvOzbV7tfc=
+      # Only deploy on tagged releases
+      on:
+        tags: true
