@@ -6,7 +6,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 
 def get_description():
-    with open('readme.rst') as f:
+    with open('README.rst') as f:
         return f.read()
 
 
