@@ -4,6 +4,12 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 
 
+ENV_MAP = {
+    'password': 'DJANGO_ADMIN_PASSWORD',
+    'username': 'DJANGO_ADMIN_USERNAME',
+}
+
+
 # Environment variable names
 ENV_PASSWORD = 'DJANGO_ADMIN_PASSWORD'
 ENV_USERNAME = 'DJANGO_ADMIN_USERNAME'
@@ -16,23 +22,39 @@ class Command(BaseCommand):
     help = 'Create an admin user'
 
     @staticmethod
-    def get_username(**options):
+    def get_option(option_name, **options):
         """
-        Get the admin's username.
+        Get an option from multiple sources.
 
-        We first check the provided options to see if a username was
-        given. If that's not present we fall back to the
-        ``DJANGO_ADMIN_USERNAME`` environment variable.
+        If the option has been specified as a command line flag, then
+        that value is used. Otherwise we try to find a corresponding
+        environment variable. If none of that is found, ``None`` is
+        returned.
+
+        Note:
+            ``option_name`` must be a key in ``ENV_MAP`` for the
+            environment variable lookup to be attempted.
 
         Args:
+            option_name:
+                The name of the option to look up. This name is also
+                used to find the appropriate environment variable in
+                ``ENV_MAP``.
             options:
-                The options produced from the command's argument parser.
+                Keyword arguments given by the command's argument
+                parser.
 
         Returns:
-            The admin's username, if it was specifed, and ``None``
+            The given option's value if one was given, and ``None``
             otherwise.
         """
-        return options.get('username') or os.environ.get(ENV_USERNAME)
+        # Try to return command line option if given
+        opt = options.get(option_name)
+        if opt:
+            return opt
+
+        # Fall back to environment variable lookup
+        return os.environ.get(ENV_MAP.get(option_name))
 
     def add_arguments(self, parser):
         """
@@ -52,12 +74,12 @@ class Command(BaseCommand):
                   '--username is specified.'),
             type=str)
 
-    def handle(*args, **options):
+    def handle(self, *args, **options):
         """
         Create an admin user based on the given options.
         """
-        username = Command.get_username(**options)
-        password = options.get('password')
+        username = self.get_option('username', **options)
+        password = self.get_option('password', **options)
 
         if not username:
             raise CommandError('--username and --password are required.')

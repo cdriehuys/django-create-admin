@@ -21,31 +21,40 @@ def test_basic_create(django_user_model):
     assert user.is_superuser
 
 
-def test_get_username_command_flag():
+def test_get_option_both_specified(os_env):
     """
-    If only the --username flag is given, that value should be used.
+    If both the command line option and environment variable are given,
+    the command line option should take precedence.
     """
-    assert createadmin.Command.get_username(username='foo') == 'foo'
+    os_env['DJANGO_ADMIN_USER'] = 'foo'
+
+    assert createadmin.Command.get_option('username', username='bar') == 'bar'
 
 
-def test_get_username_both(os_env):
+def test_get_option_command_line():
     """
-    If both the command line flag and environment variables are set, the
-    command line flag should take precedence.
+    If an option is only specifed on the command line, the command line
+    value should be used.
     """
-    os_env['DJANGO_ADMIN_USERNAME'] = 'bar'
-
-    assert createadmin.Command.get_username(username='foo') == 'foo'
+    assert createadmin.Command.get_option('username', username='foo') == 'foo'
 
 
-def test_get_username_env(os_env):
+def test_get_option_env_var(os_env):
     """
-    If only the DJANGO_ADMIN_USERNAME environment variable is given,
-    that value should be used.
+    If an option is given as an environment variable, then it should be
+    returned.
     """
     os_env['DJANGO_ADMIN_USERNAME'] = 'foo'
 
-    assert createadmin.Command.get_username() == 'foo'
+    assert createadmin.Command.get_option('username') == 'foo'
+
+
+def test_get_option_not_specified():
+    """
+    If no command line options or environment variables are given, the
+    method should return None.
+    """
+    assert createadmin.Command.get_option('foo') is None
 
 
 def test_no_args():
