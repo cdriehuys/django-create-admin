@@ -1,3 +1,7 @@
+**This project is no longer maintained.**
+
+-----
+
 ===================
 django-create-admin
 ===================
